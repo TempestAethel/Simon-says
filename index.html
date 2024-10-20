@@ -4,91 +4,210 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simon Says Game</title>
   <style>
-    body {
-      background-color: black;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-family: 'Arial', sans-serif;
-    }
+body {
+  background: linear-gradient(120deg, #2b2b2b, #1a1a1a);
+  background-size: 300% 300%;
+  animation: gradientShift 10s ease infinite;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  color: white;
+}
 
-    h1 {
-      font-size: 3rem;
-    }
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
-    .game-area {
-      display: none;
-      margin-top: 20px;
-    }
+/* Neon Glow Header */
+h1 {
+  font-size: 3.5rem;
+  text-align: center;
+  color: #0ef;
+  text-shadow: 0 0 10px #0ef, 0 0 20px #0ef, 0 0 30px #00f0ff, 0 0 40px #00c2ff, 0 0 70px #00a8ff;
+  margin-bottom: 20px;
+}
 
-    .button-box {
-      display: grid;
-      gap: 10px;
-      margin-top: 20px;
-    }
+/* Centralized and Neon-styled Score */
+#status {
+  font-size: 2rem;
+  margin: 10px 0;
+  padding: 10px;
+  color: #f2f2f2;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 15px 5px rgba(0, 255, 255, 0.4);
+  width: 200px;
+  text-shadow: 0 0 8px #00ffc2, 0 0 10px #0ef;
+}
 
-    .button {
-      width: 100px;
-      height: 100px;
-      border-radius: 10px;
-      opacity: 0.4;
-    }
+#control-panel {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
 
-    .button--answering:active {
-      opacity: 1;
-      box-shadow: 0 0 40px 5px var(--buttonBgColor);
-    }
+#control-panel select, #control-panel button {
+  background-color: #333;
+  color: #f2f2f2;
+  border: 2px solid #555;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
 
-    .button--blink {
-      animation: blink 0.5s linear;
-    }
+#control-panel select:hover, #control-panel button:hover {
+  background-color: #555;
+  box-shadow: 0px 0px 10px 2px rgba(0, 255, 255, 0.4);
+}
 
-    @keyframes blink {
-      0% {
-        opacity: 0.4;
-        box-shadow: none;
-      }
-      50% {
-        opacity: 1;
-        box-shadow: 0 0 40px 5px var(--buttonBgColor);
-      }
-      100% {
-        opacity: 0.4;
-        box-shadow: none;
-      }
-    }
+/* Game Area Styling */
+.game-area {
+  margin-top: 20px;
+  display: none;
+  text-align: center;
+}
 
-    /* Define colors for all possible buttons */
-    .button--green { --buttonBgColor: green; background-color: green; }
-    .button--red { --buttonBgColor: red; background-color: red; }
-    .button--yellow { --buttonBgColor: yellow; background-color: yellow; }
-    .button--blue { --buttonBgColor: blue; background-color: blue; }
-    .button--purple { --buttonBgColor: purple; background-color: purple; }
-    .button--orange { --buttonBgColor: orange; background-color: orange; }
-    .button--pink { --buttonBgColor: pink; background-color: pink; }
-    .button--cyan { --buttonBgColor: cyan; background-color: cyan; }
-    .button--brown { --buttonBgColor: brown; background-color: brown; }
-    .button--gray { --buttonBgColor: gray; background-color: gray; }
+/* Grid layout for tiles with a clear look */
+.button-box {
+  display: grid;
+  gap: 15px;
+  margin-top: 20px;
+}
 
-    #status {
-      font-size: 1.5rem;
-      margin-top: 10px;
-    }
+.button {
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  opacity: 0.4;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0 15px 3px rgba(0, 255, 255, 0.2); /* Subtle glow */
+}
 
-    #control-panel {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+.button--answering:active {
+  opacity: 1;
+  box-shadow: 0 0 40px 5px var(--buttonBgColor);
+}
 
-    #control-panel input {
-      margin-bottom: 10px;
-      padding: 5px;
-      font-size: 1rem;
-    }
+.button--blink {
+  animation: blink 0.5s linear;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0.4;
+    box-shadow: none;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 40px 5px var(--buttonBgColor);
+  }
+  100% {
+    opacity: 0.4;
+    box-shadow: none;
+  }
+}
+
+/* Define neon colors for the buttons */
+.button--green { --buttonBgColor: #39ff14; background-color: #39ff14; }
+.button--red { --buttonBgColor: #ff073a; background-color: #ff073a; }
+.button--yellow { --buttonBgColor: #f9ff3a; background-color: #f9ff3a; }
+.button--blue { --buttonBgColor: #00d2ff; background-color: #00d2ff; }
+.button--purple { --buttonBgColor: #ae00ff; background-color: #ae00ff; }
+.button--orange { --buttonBgColor: #ff914d; background-color: #ff914d; }
+.button--pink { --buttonBgColor: #ff66b2; background-color: #ff66b2; }
+.button--cyan { --buttonBgColor: #66fcf1; background-color: #66fcf1; }
+.button--brown { --buttonBgColor: #a52a2a; background-color: #a52a2a; }
+.button--gray { --buttonBgColor: #bcbcbc; background-color: #bcbcbc; }
+
+#achievements {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #0ef;
+  transition: color 0.3s ease, transform 0.3s ease;
+  text-shadow: 0 0 5px #0ef, 0 0 10px #0ef;
+}
+
+#achievements:hover {
+  color: #ffcc00;
+  transform: scale(1.2);
+}
+
+#achievements-modal {
+  display: none;
+  position: fixed;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #222;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  width: 300px;
+  text-align: center;
+}
+
+#close-modal {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#close-modal:hover {
+  background-color: darkred;
+}
+
+/* Toast notification */
+#toast {
+  visibility: hidden;
+  min-width: 250px;
+  background-color: #333;
+  color: white;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 30px;
+  font-size: 17px;
+}
+
+#toast.show {
+  visibility: visible;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@keyframes fadein {
+  from { bottom: 0; opacity: 0; }
+  to { bottom: 30px; opacity: 1; }
+}
+
+@keyframes fadeout {
+  from { bottom: 30px; opacity: 1; }
+  to { bottom: 0; opacity: 0; }
+}
+
   </style>
 </head>
 <body>
@@ -97,8 +216,22 @@
     <h1>Simon Says Game</h1>
   </header>
 
+  <!-- Achievements Button (top-left) -->
+  <button id="achievements">🏆</button>
+
   <div id="control-panel">
-    <input id="numTiles" type="number" min="2" max="10" value="4" placeholder="Number of tiles">
+    <!-- Dropdown for selecting number of tiles -->
+    <select id="numTiles">
+      <option value="2">2 Tiles</option>
+      <option value="3">3 Tiles</option>
+      <option value="4" selected>4 Tiles</option>
+      <option value="5">5 Tiles</option>
+      <option value="6">6 Tiles</option>
+      <option value="7">7 Tiles</option>
+      <option value="8">8 Tiles</option>
+      <option value="9">9 Tiles</option>
+      <option value="10">10 Tiles</option>
+    </select>
     <button id="startButton">Start Game</button>
   </div>
 
@@ -106,6 +239,16 @@
     <section class="button-box" id="buttonBox"></section>
     <p id="status">0</p>
   </main>
+
+  <!-- Toast Notification -->
+  <div id="toast"></div>
+
+  <!-- Achievements Modal -->
+  <div id="achievements-modal">
+    <h2>Achievements</h2>
+    <p id="achievements-list"></p>
+    <button id="close-modal">Close</button>
+  </div>
 
   <script>
     const Colors = [
@@ -118,11 +261,26 @@
     const buttonBox = document.getElementById('buttonBox');
     const numTilesInput = document.getElementById('numTiles');
     const gameArea = document.querySelector('.game-area');
+    const achievementsBtn = document.getElementById('achievements');
+    const achievementsModal = document.getElementById('achievements-modal');
+    const achievementsList = document.getElementById('achievements-list');
+    const closeModal = document.getElementById('close-modal');
+    const toast = document.getElementById('toast');
 
     let pattern = [];
     let answer = [];
     let score = 0;
     let tiles = [];
+    let numTiles = 4;
+
+    // Toast Function
+    const showToast = (message) => {
+      toast.textContent = message;
+      toast.className = "show";
+      setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+      }, 3000);
+    };
 
     const disableInput = () => {
       tiles.forEach(button => {
@@ -197,11 +355,12 @@
 
     const validationSequence = () => {
       if (answerMatchesPattern()) {
-        status.textContent = 'Correct!';
+        showToast('Correct!');
         score++;
         setTimeout(playSequence, 1000);
       } else {
-        status.textContent = 'FAIL';
+        showToast('FAIL');
+        saveHighScore(numTiles);
         setTimeout(resetGame, 1000);
       }
     };
@@ -214,7 +373,7 @@
     };
 
     const startGame = () => {
-      const numTiles = parseInt(numTilesInput.value);
+      numTiles = parseInt(numTilesInput.value);
       buttonBox.innerHTML = ''; // Clear previous tiles
       gameArea.style.display = 'block'; // Show the game area
       tiles = [];
@@ -232,7 +391,35 @@
       resetGame();
     };
 
+    // Save High Score in Local Storage
+    const saveHighScore = (numTiles) => {
+      const highScoreKey = `highScore_${numTiles}`;
+      const currentHighScore = localStorage.getItem(highScoreKey) || 0;
+      if (score > currentHighScore) {
+        localStorage.setItem(highScoreKey, score);
+      }
+      localStorage.setItem('lastGameScore', score);
+    };
+
+    // Show Achievements
+    const showAchievements = () => {
+      let achievements = '';
+      for (let i = 2; i <= 10; i++) {
+        const highScore = localStorage.getItem(`highScore_${i}`) || 0;
+        achievements += `<p>${i} Tiles: High Score - ${highScore}</p>`;
+      }
+      const lastGameScore = localStorage.getItem('lastGameScore') || 0;
+      achievements += `<p>Last Game Score: ${lastGameScore}</p>`;
+      achievementsList.innerHTML = achievements;
+      achievementsModal.style.display = 'block';
+    };
+
+    // Event Listeners
     startButton.addEventListener('click', startGame);
+    achievementsBtn.addEventListener('click', showAchievements);
+    closeModal.addEventListener('click', () => {
+      achievementsModal.style.display = 'none';
+    });
   </script>
 
 </body>
