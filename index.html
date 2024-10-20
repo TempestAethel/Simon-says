@@ -1,64 +1,215 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memory Game</title>
+    <title>Simon Says Game</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-        .grid {
-            display: grid;
-            gap: 5px;
-            margin-top: 20px;
-        }
-        .cell {
-            width: 50px;
-            height: 50px;
-            background-color: lightgray;
+            background-color: black;
+            height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .button {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            opacity: 0.4;
+            background-color: var(--buttonBgColor);
+        }
+        .button--answering:active {
+            opacity: 1;
+            box-shadow: 0 0 40px 5px var(--buttonBgColor);
+        }
+        .button--blink {
+            animation: blink 0.5s linear;
+        }
+        @keyframes blink {
+            0% {
+                opacity: 0.4;
+                box-shadow: none;
+            }
+            50% {
+                opacity: 1;
+                box-shadow: 0 0 40px 5px var(--buttonBgColor);
+            }
+            100% {
+                opacity: 0.4;
+                box-shadow: none;
+            }
+        }
+        .button--green { --buttonBgColor: green; }
+        .button--red { --buttonBgColor: red; }
+        .button--yellow { --buttonBgColor: yellow; }
+        .button--blue { --buttonBgColor: blue; }
+        .button-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        #status {
+            margin: 20px;
             font-size: 24px;
-            cursor: pointer;
+        }
+        #game-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
     </style>
 </head>
 <body>
-
-    <h1>Memory Game</h1>
-    <label for="gridSize">Choose grid size (2-6): </label>
-    <input type="number" id="gridSize" min="2" max="6" value="2">
-    <button id="startButton">Start Game</button>
-
-    <div id="gameContainer" class="grid"></div>
+    <header>
+        <h1>Simon Says</h1>
+    </header>
+    <div id="game-controls">
+        <input type="number" id="numTiles" placeholder="Number of Tiles (2-4)" min="2" max="4">
+        <button id="startGame">Start Game</button>
+    </div>
+    <main class='game-area'>
+        <section class='button-box' id="buttonBox"></section>
+        <p id='status'>0</p>
+    </main>
 
     <script>
-        document.getElementById('startButton').addEventListener('click', function() {
-            const size = parseInt(document.getElementById('gridSize').value);
-            createGrid(size);
-        });
+        const Colors = {
+            GREEN: 0,
+            RED: 1,
+            YELLOW: 2,
+            BLUE: 3
+        };
 
-        function createGrid(size) {
-            const container = document.getElementById('gameContainer');
-            container.innerHTML = ''; // Clear previous grid
-            container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-            container.style.gridTemplateRows = `repeat(${size}, 1fr)`;
+        const colorClasses = ['button--green', 'button--red', 'button--yellow', 'button--blue'];
+        let pattern = [];
+        let answer = [];
+        let score = 0;
+        let numTiles = 4;
 
-            for (let i = 0; i < size * size; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'cell';
-                cell.textContent = Math.floor(Math.random() * 100); // Random number for now
-                cell.addEventListener('click', function() {
-                    alert('You clicked on ' + cell.textContent);
-                });
-                container.appendChild(cell);
+        const status = document.getElementById('status');
+        const startButton = document.getElementById('startGame');
+        const buttonBox = document.getElementById('buttonBox');
+        const numTilesInput = document.getElementById('numTiles');
+
+        const createButtons = () => {
+            buttonBox.innerHTML = '';
+            for (let i = 0; i < numTiles; i++) {
+                const button = document.createElement('div');
+                button.className = `button ${colorClasses[i]}`;
+                button.id = i;
+                buttonBox.appendChild(button);
             }
-        }
-    </script>
+        };
 
+        const disableInput = () => {
+            for (const button of buttonBox.children) {
+                button.removeEventListener('pointerdown', pushToAnswer);
+                button.classList.remove('button--answering');
+            }
+        };
+
+        const extendPattern = () => {
+            const randomColor = Math.floor(Math.random() * numTiles);
+            pattern.push(randomColor);
+        };
+
+        const removeBlink = () => {
+            const blinked = document.querySelector('.button--blink');
+            if (blinked) {
+                blinked.classList.remove('button--blink');
+            }
+        };
+
+        const blink = squareId => {
+            const square = buttonBox.children[squareId];
+            square.classList.add('button--blink');
+            setTimeout(removeBlink, 500);
+        };
+
+        const playPattern = (pos = 0) => {
+            if (pos >= pattern.length) {
+                setTimeout(answerSequence, 1000);
+                return;
+            }
+            setTimeout(() => {
+                removeBlink();
+                blink(pattern[pos]);
+                playPattern(pos + 1);
+            }, 1000);
+        };
+
+        const playSequence = () => {
+            answer = [];
+            displayMessage(score);
+            disableInput();
+            extendPattern();
+            playPattern();
+        };
+
+        const prepareInput = () => {
+            removeBlink();
+            for (let button of buttonBox.children) {
+                button.addEventListener('pointerdown', pushToAnswer);
+                button.classList.add('button--answering');
+            }
+        };
+
+        const pushToAnswer = e => {
+            const id = parseInt(e.target.id);
+            answer.push(id);
+            const correctSquare = pattern[answer.length - 1];
+
+            if (id !== correctSquare || answer.length === pattern.length) {
+                validationSequence();
+            }
+        };
+
+        const answerMatchesPattern = () => {
+            for (let i = 0; i < pattern.length; i++) {
+                if (pattern[i] !== answer[i]) return false;
+            }
+            return true;
+        };
+
+        const answerSequence = () => {
+            prepareInput();
+        };
+
+        const displayMessage = msg => {
+            status.textContent = msg;
+        };
+
+        const validationSequence = () => {
+            if (answerMatchesPattern()) {
+                displayMessage('Correct!');
+                score++;
+                setTimeout(playSequence, 1000);
+            } else {
+                displayMessage('FAIL');
+                setTimeout(resetSequence, 1000);
+            }
+        };
+
+        const resetSequence = () => {
+            pattern = [];
+            answer = [];
+            score = 0;
+            playSequence();
+        };
+
+        startButton.addEventListener('click', () => {
+            numTiles = parseInt(numTilesInput.value);
+            if (numTiles >= 2 && numTiles <= 4) {
+                createButtons();
+                resetSequence();
+            } else {
+                alert('Please enter a valid number of tiles (2-4).');
+            }
+        });
+    </script>
 </body>
 </html>
