@@ -46,6 +46,12 @@
         .button--red { --buttonBgColor: red; }
         .button--yellow { --buttonBgColor: yellow; }
         .button--blue { --buttonBgColor: blue; }
+        .button--purple { --buttonBgColor: purple; }
+        .button--cyan { --buttonBgColor: cyan; }
+        .button--magenta { --buttonBgColor: magenta; }
+        .button--orange { --buttonBgColor: orange; }
+        .button--pink { --buttonBgColor: pink; }
+        .button--lime { --buttonBgColor: lime; }
         .button-box {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -68,7 +74,7 @@
         <h1>Simon Says</h1>
     </header>
     <div id="game-controls">
-        <input type="number" id="numTiles" placeholder="Number of Tiles (2-4)" min="2" max="4">
+        <input type="number" id="numTiles" placeholder="Number of Tiles (2-10)" min="2" max="10">
         <button id="startGame">Start Game</button>
     </div>
     <main class='game-area'>
@@ -81,10 +87,22 @@
             GREEN: 0,
             RED: 1,
             YELLOW: 2,
-            BLUE: 3
+            BLUE: 3,
+            PURPLE: 4,
+            CYAN: 5,
+            MAGENTA: 6,
+            ORANGE: 7,
+            PINK: 8,
+            LIME: 9
         };
 
-        const colorClasses = ['button--green', 'button--red', 'button--yellow', 'button--blue'];
+        const colorClasses = [
+            'button--green', 'button--red', 'button--yellow', 
+            'button--blue', 'button--purple', 'button--cyan', 
+            'button--magenta', 'button--orange', 'button--pink', 
+            'button--lime'
+        ];
+
         let pattern = [];
         let answer = [];
         let score = 0;
@@ -203,11 +221,11 @@
 
         startButton.addEventListener('click', () => {
             numTiles = parseInt(numTilesInput.value);
-            if (numTiles >= 2 && numTiles <= 4) {
+            if (numTiles >= 2 && numTiles <= 10) {
                 createButtons();
                 resetSequence();
             } else {
-                alert('Please enter a valid number of tiles (2-4).');
+                alert('Please enter a valid number of tiles (2-10).');
             }
         });
     </script>
