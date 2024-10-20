@@ -1,233 +1,239 @@
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simon Says Game</title>
-    <style>
-        body {
-            background-color: black;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
-        .button {
-            width: 100px;
-            height: 100px;
-            border-radius: 10px;
-            opacity: 0.4;
-            background-color: var(--buttonBgColor);
-        }
-        .button--answering:active {
-            opacity: 1;
-            box-shadow: 0 0 40px 5px var(--buttonBgColor);
-        }
-        .button--blink {
-            animation: blink 0.5s linear;
-        }
-        @keyframes blink {
-            0% {
-                opacity: 0.4;
-                box-shadow: none;
-            }
-            50% {
-                opacity: 1;
-                box-shadow: 0 0 40px 5px var(--buttonBgColor);
-            }
-            100% {
-                opacity: 0.4;
-                box-shadow: none;
-            }
-        }
-        .button--green { --buttonBgColor: green; }
-        .button--red { --buttonBgColor: red; }
-        .button--yellow { --buttonBgColor: yellow; }
-        .button--blue { --buttonBgColor: blue; }
-        .button--purple { --buttonBgColor: purple; }
-        .button--cyan { --buttonBgColor: cyan; }
-        .button--magenta { --buttonBgColor: magenta; }
-        .button--orange { --buttonBgColor: orange; }
-        .button--pink { --buttonBgColor: pink; }
-        .button--lime { --buttonBgColor: lime; }
-        .button-box {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            margin: 20px 0;
-        }
-        #status {
-            margin: 20px;
-            font-size: 24px;
-        }
-        #game-controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simon Says Game</title>
+  <style>
+    body {
+      background-color: black;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-family: 'Arial', sans-serif;
+    }
+
+    h1 {
+      font-size: 3rem;
+    }
+
+    .game-area {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .button-box {
+      display: grid;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .button {
+      width: 100px;
+      height: 100px;
+      border-radius: 10px;
+      opacity: 0.4;
+    }
+
+    .button--answering:active {
+      opacity: 1;
+      box-shadow: 0 0 40px 5px var(--buttonBgColor);
+    }
+
+    .button--blink {
+      animation: blink 0.5s linear;
+    }
+
+    @keyframes blink {
+      0% {
+        opacity: 0.4;
+        box-shadow: none;
+      }
+      50% {
+        opacity: 1;
+        box-shadow: 0 0 40px 5px var(--buttonBgColor);
+      }
+      100% {
+        opacity: 0.4;
+        box-shadow: none;
+      }
+    }
+
+    /* Define colors for all possible buttons */
+    .button--green { --buttonBgColor: green; background-color: green; }
+    .button--red { --buttonBgColor: red; background-color: red; }
+    .button--yellow { --buttonBgColor: yellow; background-color: yellow; }
+    .button--blue { --buttonBgColor: blue; background-color: blue; }
+    .button--purple { --buttonBgColor: purple; background-color: purple; }
+    .button--orange { --buttonBgColor: orange; background-color: orange; }
+    .button--pink { --buttonBgColor: pink; background-color: pink; }
+    .button--cyan { --buttonBgColor: cyan; background-color: cyan; }
+    .button--brown { --buttonBgColor: brown; background-color: brown; }
+    .button--gray { --buttonBgColor: gray; background-color: gray; }
+
+    #status {
+      font-size: 1.5rem;
+      margin-top: 10px;
+    }
+
+    #control-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #control-panel input {
+      margin-bottom: 10px;
+      padding: 5px;
+      font-size: 1rem;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Simon Says</h1>
-    </header>
-    <div id="game-controls">
-        <input type="number" id="numTiles" placeholder="Number of Tiles (2-10)" min="2" max="10">
-        <button id="startGame">Start Game</button>
-    </div>
-    <main class='game-area'>
-        <section class='button-box' id="buttonBox"></section>
-        <p id='status'>0</p>
-    </main>
 
-    <script>
-        const Colors = {
-            GREEN: 0,
-            RED: 1,
-            YELLOW: 2,
-            BLUE: 3,
-            PURPLE: 4,
-            CYAN: 5,
-            MAGENTA: 6,
-            ORANGE: 7,
-            PINK: 8,
-            LIME: 9
-        };
+  <header>
+    <h1>Simon Says Game</h1>
+  </header>
 
-        const colorClasses = [
-            'button--green', 'button--red', 'button--yellow', 
-            'button--blue', 'button--purple', 'button--cyan', 
-            'button--magenta', 'button--orange', 'button--pink', 
-            'button--lime'
-        ];
+  <div id="control-panel">
+    <input id="numTiles" type="number" min="2" max="10" value="4" placeholder="Number of tiles">
+    <button id="startButton">Start Game</button>
+  </div>
 
-        let pattern = [];
-        let answer = [];
-        let score = 0;
-        let numTiles = 4;
+  <main class="game-area">
+    <section class="button-box" id="buttonBox"></section>
+    <p id="status">0</p>
+  </main>
 
-        const status = document.getElementById('status');
-        const startButton = document.getElementById('startGame');
-        const buttonBox = document.getElementById('buttonBox');
-        const numTilesInput = document.getElementById('numTiles');
+  <script>
+    const Colors = [
+      'green', 'red', 'yellow', 'blue', 'purple', 'orange', 'pink', 'cyan', 'brown', 'gray'
+    ];
 
-        const createButtons = () => {
-            buttonBox.innerHTML = '';
-            for (let i = 0; i < numTiles; i++) {
-                const button = document.createElement('div');
-                button.className = `button ${colorClasses[i]}`;
-                button.id = i;
-                buttonBox.appendChild(button);
-            }
-        };
+    // Element References
+    const status = document.getElementById('status');
+    const startButton = document.getElementById('startButton');
+    const buttonBox = document.getElementById('buttonBox');
+    const numTilesInput = document.getElementById('numTiles');
+    const gameArea = document.querySelector('.game-area');
 
-        const disableInput = () => {
-            for (const button of buttonBox.children) {
-                button.removeEventListener('pointerdown', pushToAnswer);
-                button.classList.remove('button--answering');
-            }
-        };
+    let pattern = [];
+    let answer = [];
+    let score = 0;
+    let tiles = [];
 
-        const extendPattern = () => {
-            const randomColor = Math.floor(Math.random() * numTiles);
-            pattern.push(randomColor);
-        };
+    const disableInput = () => {
+      tiles.forEach(button => {
+        button.removeEventListener('pointerdown', pushToAnswer);
+        button.classList.remove('button--answering');
+      });
+    };
 
-        const removeBlink = () => {
-            const blinked = document.querySelector('.button--blink');
-            if (blinked) {
-                blinked.classList.remove('button--blink');
-            }
-        };
+    const extendPattern = () => {
+      const randomIndex = Math.floor(Math.random() * tiles.length);
+      pattern.push(randomIndex);
+    };
 
-        const blink = squareId => {
-            const square = buttonBox.children[squareId];
-            square.classList.add('button--blink');
-            setTimeout(removeBlink, 500);
-        };
+    const removeBlink = () => {
+      const blinked = document.querySelector('.button--blink');
+      if (blinked) {
+        blinked.classList.remove('button--blink');
+      }
+    };
 
-        const playPattern = (pos = 0) => {
-            if (pos >= pattern.length) {
-                setTimeout(answerSequence, 1000);
-                return;
-            }
-            setTimeout(() => {
-                removeBlink();
-                blink(pattern[pos]);
-                playPattern(pos + 1);
-            }, 1000);
-        };
+    const blink = squareId => {
+      const square = tiles[squareId];
+      square.classList.add('button--blink');
+      setTimeout(removeBlink, 500);
+    };
 
-        const playSequence = () => {
-            answer = [];
-            displayMessage(score);
-            disableInput();
-            extendPattern();
-            playPattern();
-        };
+    const playPattern = (pos = 0) => {
+      if (pos >= pattern.length) {
+        setTimeout(prepareInput, 1000);
+        return;
+      }
 
-        const prepareInput = () => {
-            removeBlink();
-            for (let button of buttonBox.children) {
-                button.addEventListener('pointerdown', pushToAnswer);
-                button.classList.add('button--answering');
-            }
-        };
+      setTimeout(() => {
+        removeBlink();
+        blink(pattern[pos]);
+        playPattern(pos + 1);
+      }, 1000);
+    };
 
-        const pushToAnswer = e => {
-            const id = parseInt(e.target.id);
-            answer.push(id);
-            const correctSquare = pattern[answer.length - 1];
+    const playSequence = () => {
+      answer = [];
+      status.textContent = score;
+      disableInput();
+      extendPattern();
+      playPattern();
+    };
 
-            if (id !== correctSquare || answer.length === pattern.length) {
-                validationSequence();
-            }
-        };
+    const prepareInput = () => {
+      removeBlink();
+      tiles.forEach((button, index) => {
+        button.addEventListener('pointerdown', pushToAnswer);
+        button.classList.add('button--answering');
+      });
+    };
 
-        const answerMatchesPattern = () => {
-            for (let i = 0; i < pattern.length; i++) {
-                if (pattern[i] !== answer[i]) return false;
-            }
-            return true;
-        };
+    const pushToAnswer = e => {
+      const id = e.target.dataset.index;
+      answer.push(parseInt(id));
 
-        const answerSequence = () => {
-            prepareInput();
-        };
+      const correctSquare = pattern[answer.length - 1];
+      if (id != correctSquare || answer.length === pattern.length) {
+        validationSequence();
+      }
+    };
 
-        const displayMessage = msg => {
-            status.textContent = msg;
-        };
+    const answerMatchesPattern = () => {
+      for (let i = 0; i < pattern.length; i++) {
+        if (pattern[i] !== answer[i]) return false;
+      }
+      return true;
+    };
 
-        const validationSequence = () => {
-            if (answerMatchesPattern()) {
-                displayMessage('Correct!');
-                score++;
-                setTimeout(playSequence, 1000);
-            } else {
-                displayMessage('FAIL');
-                setTimeout(resetSequence, 1000);
-            }
-        };
+    const validationSequence = () => {
+      if (answerMatchesPattern()) {
+        status.textContent = 'Correct!';
+        score++;
+        setTimeout(playSequence, 1000);
+      } else {
+        status.textContent = 'FAIL';
+        setTimeout(resetGame, 1000);
+      }
+    };
 
-        const resetSequence = () => {
-            pattern = [];
-            answer = [];
-            score = 0;
-            playSequence();
-        };
+    const resetGame = () => {
+      pattern = [];
+      answer = [];
+      score = 0;
+      playSequence();
+    };
 
-        startButton.addEventListener('click', () => {
-            numTiles = parseInt(numTilesInput.value);
-            if (numTiles >= 2 && numTiles <= 10) {
-                createButtons();
-                resetSequence();
-            } else {
-                alert('Please enter a valid number of tiles (2-10).');
-            }
-        });
-    </script>
+    const startGame = () => {
+      const numTiles = parseInt(numTilesInput.value);
+      buttonBox.innerHTML = ''; // Clear previous tiles
+      gameArea.style.display = 'block'; // Show the game area
+      tiles = [];
+
+      for (let i = 0; i < numTiles; i++) {
+        const color = Colors[i];
+        const button = document.createElement('div');
+        button.classList.add('button', `button--${color}`);
+        button.dataset.index = i;
+        buttonBox.appendChild(button);
+        tiles.push(button);
+      }
+
+      buttonBox.style.gridTemplateColumns = `repeat(${Math.min(5, numTiles)}, 1fr)`;
+      resetGame();
+    };
+
+    startButton.addEventListener('click', startGame);
+  </script>
+
 </body>
 </html>
